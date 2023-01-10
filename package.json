@@ -1,0 +1,49 @@
+{
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "apps/*"
+    ],
+    "nohoist": [
+      "**/@apollographql/**",
+      "**/@apollographql",
+      "**/@prisma/**",
+      "**/@prisma",
+      "**/.prisma/**",
+      "**/.prisma",
+      "**/nexus/**",
+      "**/nexus",
+      "**/nexus-plugin-prisma/**",
+      "**/nexus-plugin-prisma",
+      "**/graphql",
+      "**/graphql/**",
+      "**/graphql-type-json",
+      "**/graphql-type-json/**",
+      "**/@graphql-tools/**",
+      "**/@graphql-tools",
+      "**/@graphql-codegen",
+      "**/@graphql-codegen/**"
+    ]
+  },
+  "scripts": {
+    "web": "yarn workspace @lumina/web",
+    "api": "yarn workspace @lumina/api",
+    "render": "yarn workspace @lumina/render",
+    "vanity": "yarn workspace @lumina/vanity",
+    "player": "yarn workspace @lumina/player"
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^4.14.0",
+    "eslint": "^7.15.0",
+    "eslint-config-prettier": "^7.0.0",
+    "eslint-plugin-prettier": "^3.3.0",
+    "prettier": "^2.2.1",
+    "typescript": "^4.1.2"
+  },
+  "resolutions": {
+    "graphql": "15.3.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "**/@emotion/styled": "^11.0.0"
+  }
+}

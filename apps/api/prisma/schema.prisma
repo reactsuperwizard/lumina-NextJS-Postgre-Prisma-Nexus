@@ -1,0 +1,345 @@
+generator prisma_client {
+  provider        = "prisma-client-js"
+  output          = "../node_modules/.prisma/client"
+  binaryTargets   = ["native", "rhel-openssl-1.0.x"]
+  previewFeatures = ["orderByRelation"]
+}
+
+datasource postgresql {
+  provider = "postgresql"
+  url      = env("DB_ENDPOINT")
+}
+
+model Render {
+  id        Int          @id @default(autoincrement())
+  queuedAt  DateTime     @default(now())
+  scriptId  Int
+  updatedAt DateTime     @updatedAt
+  videoId   Int?         @unique
+  /// Integer between 0-100 to represent render % completed
+  progress  Int?
+  error     String?
+  status    RenderStatus @default(queued)
+  script    Script       @relation(fields: [scriptId], references: [id])
+  video     Video?       @relation(fields: [videoId], references: [id])
+}
+
+model Customer {
+  active             Boolean          @default(true)
+  addressLine1       String?
+  addressLine2       String?
+  city               String?
+  country            String?
+  createdAt          DateTime         @default(now())
+  name               String           @unique
+  state              String?
+  stripeId           String?
+  updatedAt          DateTime         @updatedAt
+  zip                String?
+  id                 Int              @id @default(autoincrement())
+  subId              Int?             @unique
+  tenant             String           @unique // IMMUTABLE DON'T EVER CHANGE
+  slug               String           @unique
+  subscription       Sub?             @relation(fields: [subId], references: [id])
+  users              User[]           @relation(name: "UserCustomerRelationship")
+  orders             Order[]
+  templates          Template[]
+  approvedTemplates  TemplateFlavor[]
+  requestedTemplates TemplateFlavor[]
+  defaultTemplate    TemplateFlavor?
+  videos             Video[]
+  requests           Request[]
+  scripts            Script[]
+  mappings           MasterTemplate[]
+  folder             Folder?
+  notes              String?
+  pipedriveId        Int?
+  quickbooksId       Int?
+  platformId         Int?
+  platform           Platform?        @relation(fields: [platformId], references: [id])
+  hsCompanyId        BigInt?          @unique
+  canRevise          Boolean          @default(false)
+  isPaid             Boolean          @default(false)
+}
+
+model Order {
+  status         OrderStatus @default(inProgress)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  id             Int         @id @default(autoincrement())
+  name           String?
+  customerTenant String
+  customer       Customer    @relation(fields: [customerTenant], references: [tenant])
+  requests       Request[]
+  scripts        Script[]
+  videos         Video[]
+}
+
+model Folder {
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  id             Int       @id @default(autoincrement())
+  name           String?
+  parentId       Int?
+  customerTenant String?
+  parent         Folder?   @relation(name: "FolderRelationship", fields: [parentId], references: [id])
+  children       Folder[]  @relation(name: "FolderRelationship")
+  assets         Asset[]
+  customer       Customer? @relation(fields: [customerTenant], references: [tenant])
+}
+
+model Script {
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  variables      String?
+  id             Int            @id @default(autoincrement())
+  orderId        Int?
+  templateId     Int?
+  videoId        Int?           @unique
+  name           String?        @unique
+  userId         Int?
+  customerTenant String?
+  customer       Customer?      @relation(fields: [customerTenant], references: [tenant])
+  order          Order?         @relation(fields: [orderId], references: [id])
+  template       Template?      @relation(fields: [templateId], references: [id])
+  producer       User?          @relation(fields: [userId], references: [id])
+  video          Video?         @relation(fields: [videoId], references: [id])
+  renders        Render[]
+  request        Request        @relation(fields: [requestId], references: [id])
+  requestId      Int
+  layers         Json
+  globals        Json
+  slides         Json
+  flavor         TemplateFlavor
+  customerUpdate Boolean?       @default(false)
+}
+
+model Sub {
+  createdAt      DateTime  @default(now())
+  liveVideoCap   Int?
+  tier           String?
+  updatedAt      DateTime  @updatedAt
+  yearlyVideoCap Int?
+  id             Int       @id @default(autoincrement())
+  customer       Customer?
+}
+
+model User {
+  createdAt DateTime   @default(now())
+  email     String     @unique
+  firstName String?
+  lastName  String?
+  updatedAt DateTime   @updatedAt
+  id        Int        @id @default(autoincrement())
+  authId    String     @unique
+  customers  Customer[] @relation(name: "UserCustomerRelationship")
+  scripts    Script[]
+  requests   Request[]
+  onboarding Json?
+  submittedRequests Request[] @relation(name: "SubmittedBy")
+  slackId    String?   @unique /// user specific channel id for use in direct messaging
+  optOut     Boolean   @default(false)
+  hsContactId  BigInt?       @unique
+  loginHistory LoginHistory[]
+  requestLogs RequestLog[]
+  hasFreeRequest Boolean @default(false)
+  freeRequestId Int? 
+  freeRequest Request? @relation(name: "FreeRequestRelationship", fields: [freeRequestId], references: [id])
+  avatar     String    @default("https://res.cloudinary.com/hdngr/image/authenticated/s--VMAF3iph--/v1649104657/assets/233/50_Monsters_Avatar_Icons_11_oyal7c.png")
+  isApproved Boolean @default(true)
+}
+
+model LoginHistory {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  loggedInAt DateTime
+}
+
+model Video {
+  status           VideoStatus? @default(pending)
+  name             String?
+  publishedAt      DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  id               Int          @id @default(autoincrement())
+  vimeoId          Int?         @unique
+  rating           Int?
+  customer         Customer     @relation(fields: [customerTenant], references: [tenant])
+  customerTenant   String
+  orderId          Int?
+  order            Order?       @relation(fields: [orderId], references: [id])
+  requestId        Int?         @unique
+  request          Request?     @relation(fields: [requestId], references: [id])
+  render           Render?
+  script           Script?
+  jobUrl           String?
+  thumbnail        String?
+  ready            Boolean?     @default(false)
+  embedJobPage     Boolean?     @default(false)
+  vanityButtonText String       @default("Apply Now")
+}
+
+model Template {
+  createdAt  DateTime        @default(now())
+  file       String?
+  name       String          @unique
+  updatedAt  DateTime        @updatedAt
+  flavor     TemplateFlavor?
+  maps       String?
+  layers     Json
+  globals    Json
+  slides     Json
+  template   Json
+  id         Int             @id @default(autoincrement())
+  customerId Int?
+  example    String?
+  customer   Customer?       @relation(fields: [customerId], references: [id])
+  scripts    Script[]
+}
+
+model Asset {
+  createdAt DateTime  @default(now())
+  id        Int       @id @default(autoincrement())
+  publicId  String    @unique
+  assetType AssetType @default(image)
+  url       String    @default("")
+  name      String?
+  folderId  Int?
+  folder    Folder?   @relation(fields: [folderId], references: [id])
+  updatedAt DateTime  @updatedAt
+}
+
+model Request {
+  id              Int             @id @default(autoincrement())
+  status          RequestStatus   @default(draft)
+  submittedAt     DateTime?
+  inProgressAt    DateTime?
+  completedAt     DateTime?
+  cancelledAt     DateTime?
+  cancelledReason String?
+  message         String?
+  notes           String?
+  jobTitle        String?
+  url             String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  orderId         Int?
+  order           Order?          @relation(fields: [orderId], references: [id])
+  script          Script?
+  video           Video?
+  ownerId         Int?
+  owner           User?           @relation(fields: [ownerId], references: [id])
+  customer        Customer        @relation(fields: [customerTenant], references: [tenant])
+  customerTenant  String
+  submittedById   Int?
+  submittedBy     User?       @relation(name: "SubmittedBy", fields: [submittedById], references: [id])
+  slackTs         String?    ///  The ts param used to retrieve a slack "parent" message in the #production channel.  https://api.slack.com/messaging/retrieving#finding_threads
+  template           TemplateFlavor? 
+  basePrice Int? 
+  bonusPrice Int? 
+  bonusDeadline DateTime?
+  logs RequestLog[]
+  users User[] @relation(name: "FreeRequestRelationship")
+}
+
+model RequestLog {
+  id              Int           @id @default(autoincrement())
+  event RequestLogsEvent
+  request    Request   @relation(fields: [requestId], references: [id])
+  requestId  Int
+  user    User   @relation(fields: [userId], references: [id])
+  userId  Int
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model MasterTemplate {
+  id              Int           @id @default(autoincrement())
+  customer        Customer        @relation(fields: [customerId], references: [id])
+  customerId      Int
+  flavor          TemplateFlavor 
+  layers          Json
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  @@unique([customerId, flavor])
+}
+
+model Platform {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  url       String?
+  customers Customer[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+enum RenderStatus {
+  rendering
+  queued
+  completed
+  errored
+}
+
+enum UserRole {
+  admin
+  user
+}
+
+enum RequestStatus {
+  draft
+  submitted
+  scripting
+  completed
+  cancelled
+  queued
+  rendering
+  qa
+  final
+}
+
+enum VideoStatus {
+  pending
+  live
+}
+
+enum RequestLogsEvent {
+  RequestSubmitted
+  RequestAccepted
+  RequestReturnedToQueue
+  ScriptAddedToRenderQueue
+  AllEditsDeleted
+  RenderFailed
+  RenderCompleted
+  VideoPublished
+  CustomerRequestEdits
+}
+
+enum TemplateFlavor {
+  T1
+  T2
+  T4
+  T6
+  T7
+  T8
+  T10
+  T11
+  T12
+  T13
+  T14
+  T15
+  T16
+  E1
+}
+
+enum OrderStatus {
+  inProgress
+  completed
+}
+
+enum AssetType {
+  image
+  video
+  audio
+  raw
+}

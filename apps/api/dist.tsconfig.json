@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "moduleResolution": "node",
+    "lib": ["esnext"],
+    "esModuleInterop": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "inlineSourceMap": true,
+    "composite": true,
+    "preserveSymlinks": false
+  },
+  "exclude": ["./src/**/*.spec.*", "node_modules"],
+  "include": [
+    "./index.ts",
+    "./generated/graphql.ts",
+    "./src/auth/Tenants.ts",
+    "./src/utils/slugify.ts",
+    "./src/types/User/onboarding.ts",
+    "./src/types/Render/RenderMessageAttributes.ts"
+  ]
+}

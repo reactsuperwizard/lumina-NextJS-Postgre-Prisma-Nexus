@@ -1,0 +1,22 @@
+.DS_Store
+.webpack
+.serverless
+.env*
+# don't ignore .env.template
+!.env.template
+.build
+prisma/migrations/dev/*
+
+#dependencies
+/node_modules
+
+yarn-error.log
+
+# don't use npm package-lock!
+# we use yarn
+package-lock.json
+
+.prisma
+
+generated/*
+!generated/DONT_DELETE.md

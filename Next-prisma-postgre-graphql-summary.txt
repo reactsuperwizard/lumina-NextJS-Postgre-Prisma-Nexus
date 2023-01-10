@@ -1,0 +1,68 @@
+Next.js is a fullstack React framework with support for different data fetching strategies. The first one is server-side rendering, where we fetch data on each request. Alternatlively, you can fetch data at build time and have a static website that can be served by a CDN. In this app, we will be fetching data server-side.
+
+1. Creating the data model for the app
+
+The database will have the following entities, where each entity will map to a table in the database.
+User: a person with an account. They can bookmark their favorite links and can either be an admin or a regular user.
+Link: to represent the different attributes for a link such as a title, a description, and a URL.
+There's a many-to-many (also known as m-n) relation between the User and Link entities. This way a user can have many links and a link can have many users.
+
+- Add Prisma to your project
+We're going to use Prisma to create the database tables. It is an ORM that can be used to interact with a database.
+Prisma's CLI : npm install prisma -D, npx prisma init : Automatically /prisma/schema.prisma
+.env: This is where you define environment variables such as the database connection URL or access tokens.
+Here replace the dummy connection url with the connection url of your postgreSQL database.
+URL: Connector://USER:PASSWORD@HOST:PORT/DATABASE?schema=schema&key=value
+ex: DATABASE_URL="postgresql://postgres:@localhost:5432/mydb?schema=public"
+
+- Create your database schema with Prisma
+/prisma/schema.prisma file
+datasource db {  provider = "postgresql"  url      = env("DATABASE_URL")}
+generator client {  provider = "prisma-client-js"}
+In the datasource field, we specified that we're using PostgreSQL and that we're loading the database url from the .env file.
+Next, in generator block, we're specifying that we want to generate Prisma CLient based on our data models.
+*Pisma Client is an auto-generated and type-safe query builder, we are going to see how it simplifies working with database.
+
+- Defining the models and relations
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  email     String?  @unique
+  image     String?
+  role      Role     @default(USER)
+  bookmarks Link[]
+}
+enum Role {
+  USER
+  ADMIN
+}
+model Link {
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  title        String
+  description  String
+  url          String
+  imageUrl     String
+  category     String
+  users        User[]
+}
+Finally, we need to create a many-to-many relation between the User and the Link models, so that a user can have many links and a link can have many users.
+This is an implicit many-to-many relation, where we have a relation table in the underlying database. This relation table is managed by Prisma.
+
+2. Migrating and Pushing changes to the database
+npx prisma db push
+prisma db push is useful for schema prototyping, where the goal is to synchronize a new schema with a development database. As your schema evolves, you will want to create and maintain a migration history, to do that you will use Prisma Migrate.
+
+3. Seeding the database
+Since the database is currently empty, we want to populate it with data. The first thing we need to do is install Prisma Client, a type-safe query builder, which will allow us to interact with our database.
+npm install @prisma/client
+Next, create a new file called /prisma/seed.ts.
+creating user uing the create()function, and link using createMany().
+Next, running the following command. npx prisma db seed
+
+4. Use Prisma Studio to explore your database
+npx prisma studio
+
+5. 

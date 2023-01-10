@@ -1,0 +1,88 @@
+{
+  "name": "@lumina/render",
+  "private": true,
+  "version": "1.0.0",
+  "main": "./dist/src/types.js",
+  "types": "./dist/src/types.d.ts",
+  "files": [
+    "dist/*"
+  ],
+  "scripts": {
+    "start": "VIDEOS_DIR_PATH=/Users/huston/Projects/lumina-mono/apps/render/videos dist/index-macos",
+    "dev": "yarn patch && ts-node scripts/dev.ts",
+    "start:skipRender": "yarn patch && ts-node src/index.ts --skip-render",
+    "debug:render": "rm -rf .build && mkdir .build && cp .env.local ./.build/.env.local && tsc-watch --project .build.tsconfig.json --onSuccess 'node --inspect-brk .build/scripts/dev.js'",
+    "debug:local": "rm -rf .build && mkdir .build && cp .env.local ./.build/.env.local && tsc-watch --project .build.tsconfig.json -b --onSuccess 'node --inspect-brk .build/scripts/render-local.js'",
+    "dev:debug:local": "./node_modules/.bin/nodemon --exec 'yarn debug:local'",
+    "dev:debug:render": "./node_modules/.bin/nodemon --exec 'yarn debug:render'",
+    "dev:debug:test": "node --inspect-brk -r ts-node/register scripts/dev.ts",
+    "render:local": "ts-node ./scripts/render-local.ts",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "patch": "sudo ts-node src/helpers/patch.ts",
+    "dist": "rm -rf dist && tsc --project dist.tsconfig.json",
+    "dist:windows": "tsc --project dist.tsconfig.json",
+    "build": "yarn build:.build && yarn build:cp && yarn build:bin:cloud",
+    "build:local": "yarn build:.build && yarn build:cp && yarn build:bin:local",
+    "build:.build": "rm -rf .build && tsc --project .build.tsconfig.json",
+    "build:cp": "cp .env.staging .env.production .env.local .build && cp -r render-templates .build",
+    "build:bin:cloud": "rm -rf packages/cloud && mkdir -p packages/cloud package/videos package/bin && pkg . --targets latest-win-x64 --out-path ./packages/cloud/bin",
+    "build:bin:local": "rm -rf packages/local && mkdir -p packages/local package/videos package/bin && pkg . --targets latest-macos-x64 --out-path ./packages/local/bin",
+    "render:T4Job": "ts-node-script scripts/render-local.ts --template=T4 --job",
+    "render:T6Job": "ts-node-script scripts/render-local.ts --template=T6 --job",
+    "render:T4Script": "ts-node-script scripts/render-local.ts --template=T4 --script",
+    "test": "mocha",
+    "test:watch": "mocha --watch",
+    "test:debug": "mocha --inspect-brk --watch",
+    "launch:ae": "/Applications/Adobe After Effects 2020/Adobe After Effects 2020.app/Contents/MacOS/After Effects ; exit;"
+  },
+  "bin": ".build/scripts/cloud.js",
+  "pkg": {
+    "assets": [
+      ".build/.env.staging",
+      ".build/.env.production",
+      ".build/render-templates/T4.aep",
+      ".build/render-templates/T6.aep"
+    ]
+  },
+  "dependencies": {
+    "@nexrender/action-copy": "^1.24.2",
+    "@nexrender/action-encode": "^1.24.2",
+    "@nexrender/core": "^1.24.3",
+    "auth0": "^2.29.0",
+    "dotenv": "^8.2.0",
+    "graphql": "^15.3.0",
+    "graphql-request": "3.2.0",
+    "mime-types": "^2.1.26",
+    "node-fetch": "^2.6.0",
+    "vimeo": "^2.1.1"
+  },
+  "devDependencies": {
+    "@types/auth0": "^2.20.3",
+    "@types/mocha": "^8.2.0",
+    "@types/node": "^13.13.0",
+    "@types/vimeo": "^2.1.3",
+    "@typescript-eslint/eslint-plugin": "^3.8.0",
+    "@typescript-eslint/parser": "^3.8.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "gaxios": "^3.0.3",
+    "nodemon": "^2.0.3",
+    "osa": "^2.5.0",
+    "pkg": "^4.4.9",
+    "prettier": "^2.0.5",
+    "prettier-eslint": "^11.0.0",
+    "ps-list": "^7.2.0",
+    "ts-node": "^8.8.2",
+    "tsc-watch": "^4.2.9",
+    "typescript": "^4.1.3",
+    "yargs": "^16.2.0"
+  },
+  "resolutions": {
+    "@aws-sdk/types": "3.1.0"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false,
+    "trailingComma": "all"
+  }
+}

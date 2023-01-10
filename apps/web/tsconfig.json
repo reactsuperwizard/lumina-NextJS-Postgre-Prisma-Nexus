@@ -1,0 +1,40 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "preserve",
+    "lib": ["dom", "es2017", "ES2019.Object"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "esnext",
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    // "paths": {
+    //   "lib": [
+    //     "lib"
+    //   ]
+    // },
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "noEmit": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "./lib/**/*.*",
+    "./**/*.ts",
+    "./**/*.tsx",
+    "typings/*.d.ts",
+    "app.lumina.local.js"
+  ],
+  "exclude": ["node_modules", ".next"]
+}

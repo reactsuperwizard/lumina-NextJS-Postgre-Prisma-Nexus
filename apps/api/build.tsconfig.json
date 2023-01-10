@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "./.build",
+    "rootDir": "./",
+    "moduleResolution": "node",
+    "lib": ["esnext"],
+    "esModuleInterop": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "preserveSymlinks": false,
+    "declaration": false,
+    "build": true
+  },
+  "paths": {
+    "@lumina/render": ["../render"]
+  },
+  "include": ["src", "generated"],
+  "exclude": ["src/**/*.spec.*", ".build/**/*", "node_modules", ".serverless", ".webpack"]
+}

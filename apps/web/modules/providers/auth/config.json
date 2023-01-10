@@ -1,0 +1,8 @@
+{
+  "domain": "auth.lumina.co",
+  "client_id": "3u3pJUs2S3pskEwUlSRGIqDy1EVBpYy4",
+  "audience": "http://127.0.0.1:4000/",
+  "advancedOptions": {
+    "defaultScope": "openid https://lumina.com/"
+  }
+}

@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Customer" ALTER COLUMN "hsCompanyId" SET DATA TYPE BIGINT;
+
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "hsContactId" SET DATA TYPE BIGINT;

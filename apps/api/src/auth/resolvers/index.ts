@@ -1,0 +1,5 @@
+export { getCustomer } from './getCustomer'
+export { getCustomerResource } from './getCustomerResource'
+export { getCustomerResources } from './getCustomerResources'
+export { updateOneCustomerResource } from './updateOneCustomerResource'
+export { createOneCustomerResource } from './createOneCustomerResource'

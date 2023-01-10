@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+  - "stable"
+cache:
+  directories:
+    - node_modules
+install:
+  - yarn install --ignore-engines --frozen-lockfile
+script:
+  - yarn web lint
+  - yarn web test

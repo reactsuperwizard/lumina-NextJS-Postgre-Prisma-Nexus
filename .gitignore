@@ -1,0 +1,5 @@
+node_modules
+.DS_Store
+*.tsbuildinfo
+yarn-error.log
+apps/web/pages/canvas-test.tsx

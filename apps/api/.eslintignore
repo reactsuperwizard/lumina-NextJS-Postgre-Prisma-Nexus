@@ -1,0 +1,7 @@
+.build/*
+.serverless/*
+dist
+generated
+
+# default
+node_modules/*

@@ -1,0 +1,21 @@
+https://blog.logrocket.com/crud-react-graphql-examples/
+https://dev.to/franciscomendes10866/graphql-authentication-and-authorization-in-nodejs-hm4
+https://medium.com/@brianschardt/best-graphql-node-api-template-for-sql-jwt-2018-5e956b715143///
+https://css-tricks.com/lets-create-our-own-authentication-api-with-nodejs-and-graphql/
+https://github.com/YuLeven/nodejs-graphql-mysql-example/tree/master/src
+
+
+-Restful API
+https://aws.amazon.com/what-is/restful-api/
+https://www.tutorialspoint.com/restful/index.htm
+
+
+https://www.upwork.com/jobs/~0168431fa3cd9f25b2
+
+
+https://www.prisma.io/blog/fullstack-nextjs-graphql-prisma-oklidw1rhw
+
+
+NextJS interview question: https://tekslate.com/nextjs-interview-questions
+Apollo graphql interview question: https://climbtheladder.com/apollo-graphql-interview-questions/
+Node interview question: https://www.edureka.co/blog/interview-questions/top-node-js-interview-questions-2016/

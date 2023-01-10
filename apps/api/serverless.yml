@@ -1,0 +1,66 @@
+org: midas
+app: midas-api
+service: midas-api
+provider:
+  name: aws
+  stage: ${opt:stage}
+  runtime: nodejs12.x
+  tracing:
+    lambda: true
+  timeout: 30
+functions:
+  graphql:
+    handler: src/server.lambda
+    events:
+      - http:
+          path: /
+          method: post
+          cors:
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - operation
+      - http:
+          path: /
+          method: get
+          cors:
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - operation
+      - http:
+          path: /{any+}
+          method: get
+          cors:
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - operation
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-webpack
+custom:
+  webpack:
+    webpackConfig: 'webpack.config.js' # Name of webpack configuration file
+    keepOutputDirectory: true
+    includeModules:
+      forceExclude:
+        - .prisma
+    packager: 'yarn' # Packager that will be used to package your external modules
+    packagePath: './package.json'
+    packagerOptions:
+      scripts:
+        - cp -r ../../node_modules/.prisma ./node_modules/ # CRITICAL: copy prisma and binaries
+        - rm -rf ./node_modules/.prisma/client/query-engine-darwin # delete MacOS binary to make it a ~ 20MB lighter

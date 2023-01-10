@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "moduleResolution": "node",
+    "lib": ["esnext"],
+    "esModuleInterop": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "inlineSourceMap": true,
+    "composite": true,
+    "preserveSymlinks": false
+  },
+  "include": [  
+    "./src/flavors",
+    "./src/types.ts"
+  ],
+  "exclude": [
+    "**/__tests__/**"
+  ]
+}
